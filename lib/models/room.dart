@@ -7,6 +7,8 @@ class Room {
   final String facilities;
   final String wifiSpeed;
   final bool isAvailable;
+  final bool isFavorite;
+  final String status; // 'ready' | 'busy'
 
   const Room({
     required this.id,
@@ -17,5 +19,7 @@ class Room {
     this.facilities = 'Smart TV',
     this.wifiSpeed = '1 Gbps',
     this.isAvailable = true,
+    this.isFavorite = false,
+    this.status = 'ready',
   });
 }

@@ -5,13 +5,14 @@ import '../../features/auth/login_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/room_detail/room_detail_screen.dart';
 import '../../features/schedule/schedule_screen.dart';
-import '../../features/notifications/notifications_screen.dart';
+import '../../features/favorites/favorites_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../shared/widgets/bottom_nav_bar.dart';
 import '../../core/constants/app_constants.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
-final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> _shellNavigatorKey =
+    GlobalKey<NavigatorState>();
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
@@ -33,7 +34,19 @@ final GoRouter appRouter = GoRouter(
           path: '/home',
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const HomeScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+            transitionDuration: AppConstants.screenTransition,
+          ),
+        ),
+        GoRoute(
+          path: '/favorites',
+          pageBuilder: (context, state) => CustomTransitionPage(
+            child: const FavoritesScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
               return FadeTransition(opacity: animation, child: child);
             },
             transitionDuration: AppConstants.screenTransition,
@@ -43,17 +56,8 @@ final GoRouter appRouter = GoRouter(
           path: '/schedule',
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const ScheduleScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            transitionDuration: AppConstants.screenTransition,
-          ),
-        ),
-        GoRoute(
-          path: '/notifications',
-          pageBuilder: (context, state) => CustomTransitionPage(
-            child: const NotificationsScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
               return FadeTransition(opacity: animation, child: child);
             },
             transitionDuration: AppConstants.screenTransition,
@@ -63,7 +67,8 @@ final GoRouter appRouter = GoRouter(
           path: '/profile',
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const ProfileScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
               return FadeTransition(opacity: animation, child: child);
             },
             transitionDuration: AppConstants.screenTransition,
@@ -92,11 +97,10 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
-  static const _routes = ['/home', '/schedule', '/notifications', '/profile'];
+  static const _routes = ['/home', '/favorites', '/schedule', '/profile'];
 
   @override
   Widget build(BuildContext context) {
-    // Sync index with current route
     final location = GoRouterState.of(context).uri.toString();
     for (int i = 0; i < _routes.length; i++) {
       if (location.startsWith(_routes[i])) {
@@ -111,6 +115,11 @@ class _MainShellState extends State<MainShell> {
       bottomNavigationBar: GlassBottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) {
+          if (index == 4) {
+            // Center FAB — placeholder, navigate home
+            context.go('/home');
+            return;
+          }
           if (index != _currentIndex) {
             setState(() => _currentIndex = index);
             context.go(_routes[index]);

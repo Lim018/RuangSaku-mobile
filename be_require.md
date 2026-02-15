@@ -23,9 +23,9 @@ Login pengguna dengan SSO/email dan password.
   "token": "jwt_token",
   "user": {
     "id": 1,
-    "name": "Nama Mahasiswa",
-    "email": "nim@student.univ.ac.id",
-    "role": "mahasiswa", // "admin" | "dosen" | "mahasiswa"
+    "name": "Arif Rahman",
+    "email": "arif.rahman@univ.ac.id",
+    "role": "mahasiswa",
     "avatar_url": "https://..."
   }
 }
@@ -42,7 +42,7 @@ Ambil profil pengguna dari token JWT.
 ## 2. Gedung (Buildings)
 
 ### `GET /api/buildings`
-Daftar semua gedung beserta jumlah ruangan.
+Daftar semua gedung beserta jumlah bilik.
 
 **Response:**
 ```json
@@ -58,19 +58,20 @@ Daftar semua gedung beserta jumlah ruangan.
 ```
 
 ### `GET /api/buildings/:id/rooms`
-Daftar ruangan dalam satu gedung.
+Daftar bilik dalam satu gedung.
 
 ---
 
-## 3. Ruangan (Rooms)
+## 3. Bilik (Rooms)
 
 ### `GET /api/rooms`
-Daftar semua ruangan (mendukung query params untuk filter/search).
+Daftar semua bilik (mendukung query params untuk filter/search).
 
 **Query Params:**
-- `search` — cari berdasarkan nama/kode ruang
+- `search` — cari berdasarkan nama/kode bilik
 - `building_id` — filter berdasarkan gedung
-- `available` — `true` untuk hanya ruang yang tersedia
+- `type` — filter berdasarkan jenis: `makmal` | `seminar` | `teori`
+- `available` — `true` untuk hanya bilik yang tersedia
 - `page`, `limit` — pagination
 
 **Response:**
@@ -78,34 +79,38 @@ Daftar semua ruangan (mendukung query params untuk filter/search).
 [
   {
     "id": 101,
-    "name": "Lab Robotik",
-    "building": "Teknik",
+    "name": "Makmal Robotik",
+    "building": "Gedung Teknik",
     "floor": 2,
     "image_url": "https://...",
     "capacity": 30,
     "facilities": ["Smart TV", "AC", "Proyektor"],
     "wifi_speed": "1 Gbps",
     "is_available": true,
+    "status": "ready",
+    "is_favorite": false,
     "current_schedule": null
   }
 ]
 ```
 
 ### `GET /api/rooms/:id`
-Detail ruangan beserta jadwal hari ini.
+Detail bilik beserta jadual hari ini.
 
 **Response:**
 ```json
 {
   "id": 101,
-  "name": "Lab Robotik",
-  "building": "Teknik",
+  "name": "Makmal Robotik",
+  "building": "Gedung Teknik",
   "floor": 2,
   "image_url": "https://...",
   "capacity": 30,
   "facilities": ["Smart TV", "AC"],
   "wifi_speed": "1 Gbps",
   "is_available": true,
+  "status": "ready",
+  "is_favorite": true,
   "today_schedules": [
     {
       "id": 1,
@@ -118,15 +123,58 @@ Detail ruangan beserta jadwal hari ini.
 }
 ```
 
-### `GET /api/rooms/popular`
-Daftar ruangan populer/rekomendasi untuk halaman home.
+### `GET /api/rooms/:id/time-slots`
+Daftar slot masa yang tersedia untuk tarikh tertentu.
+
+**Query Params:**
+- `date` — tarikh yang diminta (format: `YYYY-MM-DD`)
+
+**Response:**
+```json
+[
+  { "label": "Pagi", "start_time": "08:00", "end_time": "10:00", "available": true },
+  { "label": "Tengahari", "start_time": "11:00", "end_time": "13:00", "available": false },
+  { "label": "Petang", "start_time": "14:00", "end_time": "16:00", "available": true }
+]
+```
 
 ---
 
-## 4. Booking / Pemesanan
+## 4. Kegemaran (Favorites)
+
+### `GET /api/favorites`
+Daftar bilik kegemaran pengguna yang sedang login.
+
+**Response:**
+```json
+[
+  {
+    "id": 101,
+    "name": "Makmal Robotik",
+    "building": "Gedung Teknik",
+    "image_url": "https://...",
+    "status": "ready"
+  }
+]
+```
+
+### `POST /api/favorites`
+Tambah bilik ke senarai kegemaran.
+
+**Request Body:**
+```json
+{ "room_id": 101 }
+```
+
+### `DELETE /api/favorites/:room_id`
+Hapus bilik dari senarai kegemaran.
+
+---
+
+## 5. Tempahan (Bookings)
 
 ### `POST /api/bookings`
-Buat pemesanan ruangan baru. Backend harus melakukan **validasi konflik jadwal**.
+Buat tempahan bilik baru. Backend harus melakukan **validasi konflik jadual**.
 
 **Request Body:**
 ```json
@@ -135,20 +183,20 @@ Buat pemesanan ruangan baru. Backend harus melakukan **validasi konflik jadwal**
   "date": "2026-02-17",
   "start_time": "08:00",
   "end_time": "10:00",
-  "title": "Diskusi Kelompok" // opsional
+  "title": "Diskusi Kumpulan"
 }
 ```
 
-**Response Sukses:**
+**Response Berjaya:**
 ```json
 {
   "id": 10,
   "room_id": 101,
-  "room_name": "Lab Robotik",
+  "room_name": "Makmal Robotik",
   "date": "2026-02-17",
   "start_time": "08:00",
   "end_time": "10:00",
-  "status": "Active",
+  "status": "Aktif",
   "created_at": "2026-02-16T00:50:00Z"
 }
 ```
@@ -157,39 +205,41 @@ Buat pemesanan ruangan baru. Backend harus melakukan **validasi konflik jadwal**
 ```json
 {
   "error": "SCHEDULE_CONFLICT",
-  "message": "Jadwal bertabrakan dengan pemesanan lain pada 08:00 - 10:00"
+  "message": "Jadual bertabrakan dengan tempahan lain pada 08:00 - 10:00"
 }
 ```
 
 ### `GET /api/bookings/me`
-Daftar pemesanan milik pengguna yang sedang login.
+Daftar tempahan milik pengguna yang sedang login.
 
 **Query Params:**
-- `status` — `Active` | `Upcoming` | `Completed` | `Cancelled`
+- `status` — `Aktif` | `Akan Datang` | `Selesai` | `Dibatalkan`
 
 **Response:**
 ```json
 [
   {
     "id": 10,
-    "room_name": "Lab Robotik",
+    "room_name": "Makmal Robotik",
     "date": "2026-02-18",
     "start_time": "09:00",
     "end_time": "12:00",
-    "status": "Active"
+    "status": "Aktif",
+    "status_color": "#10B981",
+    "status_bg_color": "#ECFDF5"
   }
 ]
 ```
 
 ### `DELETE /api/bookings/:id`
-Batalkan / kosongkan pemesanan (fitur "Kosongkan Ruangan").
+Batalkan tempahan.
 
 ### `PATCH /api/bookings/:id/cancel`
-Alternatif soft-cancel: ubah status menjadi `Cancelled`.
+Alternatif soft-cancel: ubah status menjadi `Dibatalkan`.
 
 ---
 
-## 5. Real-time (WebSocket)
+## 6. Real-time (WebSocket)
 
 ### `ws://server/socket`
 Koneksi WebSocket menggunakan Socket.io untuk update real-time.
@@ -198,15 +248,16 @@ Koneksi WebSocket menggunakan Socket.io untuk update real-time.
 
 | Event | Arah | Deskripsi |
 |---|---|---|
-| `room:status_update` | Server → Client | Status ruangan berubah (terisi/kosong) |
-| `booking:created` | Server → Client | Ada pemesanan baru |
-| `booking:cancelled` | Server → Client | Pemesanan dibatalkan |
+| `room:status_update` | Server → Client | Status bilik berubah (terisi/kosong) |
+| `booking:created` | Server → Client | Ada tempahan baru |
+| `booking:cancelled` | Server → Client | Tempahan dibatalkan |
 
 **Payload `room:status_update`:**
 ```json
 {
   "room_id": 101,
   "is_available": false,
+  "status": "busy",
   "current_schedule": {
     "title": "Kuliah Robotika",
     "end_time": "10:00"
@@ -216,18 +267,18 @@ Koneksi WebSocket menggunakan Socket.io untuk update real-time.
 
 ---
 
-## 6. Kebutuhan Middleware
+## 7. Kebutuhan Middleware
 
 | Middleware | Keterangan |
 |---|---|
 | JWT Auth | Semua endpoint kecuali `/auth/login` dan `/auth/register` |
-| RBAC | Admin: CRUD gedung/ruangan/user. Dosen: booking + cancel. Mahasiswa: booking saja |
-| Rate Limiter | Proteksi endpoint booking dari spam |
-| Conflict Validator | Cek tabrakan jadwal sebelum insert booking |
+| RBAC | Admin: CRUD gedung/bilik/user. Dosen: tempahan + batal. Mahasiswa: tempahan sahaja |
+| Rate Limiter | Proteksi endpoint tempahan dari spam |
+| Conflict Validator | Cek pertembungan jadual sebelum insert tempahan |
 
 ---
 
-## 7. Database Tables (PostgreSQL)
+## 8. Database Tables (PostgreSQL)
 
 ```sql
 -- users
@@ -236,7 +287,7 @@ CREATE TABLE users (
   name VARCHAR(100),
   email VARCHAR(100) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
-  role VARCHAR(20) DEFAULT 'mahasiswa', -- admin | dosen | mahasiswa
+  role VARCHAR(20) DEFAULT 'mahasiswa',
   avatar_url TEXT,
   created_at TIMESTAMP DEFAULT NOW()
 );
@@ -257,9 +308,20 @@ CREATE TABLE rooms (
   floor INT,
   capacity INT,
   image_url TEXT,
-  facilities TEXT[], -- array PostgreSQL
+  facilities TEXT[],
   wifi_speed VARCHAR(20),
-  is_available BOOLEAN DEFAULT TRUE
+  is_available BOOLEAN DEFAULT TRUE,
+  status VARCHAR(20) DEFAULT 'ready', -- ready | busy
+  type VARCHAR(20) DEFAULT 'seminar' -- makmal | seminar | teori
+);
+
+-- favorites
+CREATE TABLE favorites (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id),
+  room_id INT REFERENCES rooms(id),
+  created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(user_id, room_id)
 );
 
 -- bookings
@@ -271,7 +333,7 @@ CREATE TABLE bookings (
   start_time TIME NOT NULL,
   end_time TIME NOT NULL,
   title VARCHAR(200),
-  status VARCHAR(20) DEFAULT 'Active', -- Active | Upcoming | Completed | Cancelled
+  status VARCHAR(20) DEFAULT 'Aktif', -- Aktif | Akan Datang | Selesai | Dibatalkan
   created_at TIMESTAMP DEFAULT NOW(),
   CONSTRAINT no_overlap EXCLUDE USING gist (
     room_id WITH =,
@@ -279,11 +341,20 @@ CREATE TABLE bookings (
     tsrange(start_time::timestamp, end_time::timestamp) WITH &&
   )
 );
+
+-- time_slots (predefined time slots per room type)
+CREATE TABLE time_slots (
+  id SERIAL PRIMARY KEY,
+  label VARCHAR(50) NOT NULL, -- Pagi | Tengahari | Petang
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  room_type VARCHAR(20) DEFAULT 'seminar'
+);
 ```
 
 ---
 
-## 8. Tech Stack Backend (sesuai PRD)
+## 9. Tech Stack Backend (sesuai PRD)
 
 - **Runtime**: Node.js
 - **Framework**: Express.js

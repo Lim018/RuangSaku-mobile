@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_typography.dart';
-import '../../core/constants/app_constants.dart';
-import '../../shared/widgets/press_effect.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,213 +12,148 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppConstants.paddingXL),
+        child: Padding(
+          padding: const EdgeInsets.all(32),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 60),
-
-              // Shield icon
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryYellow,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: const Icon(
-                  LucideIcons.shieldCheck,
+              const Text(
+                'Ekses Pantas.',
+                style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w900,
                   color: AppColors.slate900,
-                  size: 24,
+                  height: 1.1,
+                  letterSpacing: -1,
                 ),
               )
                   .animate()
                   .fadeIn(duration: 500.ms)
-                  .scale(begin: const Offset(0.5, 0.5), curve: Curves.easeOutBack),
-
-              const SizedBox(height: 24),
-
-              // Heading
-              Text(
-                'Ekses Penuh\nRuangSaku.',
-                style: AppTypography.headingBlack.copyWith(fontSize: 36),
-              )
-                  .animate()
-                  .fadeIn(duration: 600.ms, delay: 150.ms)
-                  .slideX(begin: -0.1, curve: Curves.easeOutCubic),
+                  .slideY(begin: 0.2, curve: Curves.easeOutCubic),
 
               const SizedBox(height: 16),
 
-              // Subtitle
-              Text(
-                'Kelola pemesanan ruangan Anda dengan mudah dan aman.',
-                style: AppTypography.bodyLG,
+              const Text(
+                'Tempah bilik kuliah semudah satu ketikan.',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.slate400,
+                ),
               )
                   .animate()
-                  .fadeIn(duration: 600.ms, delay: 300.ms)
-                  .slideX(begin: -0.1, curve: Curves.easeOutCubic),
+                  .fadeIn(duration: 500.ms, delay: 100.ms)
+                  .slideY(begin: 0.2, curve: Curves.easeOutCubic),
 
-              const SizedBox(height: 48),
+              const SizedBox(height: 56),
 
-              // SSO Input
-              _buildInputField(
-                label: 'SINGLE SIGN ON',
-                placeholder: 'nim@student.univ.ac.id',
-                controller: _emailController,
-                delay: 400,
-              ),
+              // NIM Input
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.slate50,
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(color: AppColors.slate100),
+                ),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'NIM / ID Pelajar',
+                    hintStyle: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.slate400,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.all(20),
+                  ),
+                ),
+              )
+                  .animate()
+                  .fadeIn(duration: 500.ms, delay: 200.ms)
+                  .slideY(begin: 0.2, curve: Curves.easeOutCubic),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
-              // Password input
-              _buildPasswordField(delay: 500),
+              // Password Input
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.slate50,
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(color: AppColors.slate100),
+                ),
+                child: TextField(
+                  obscureText: _obscurePassword,
+                  decoration: InputDecoration(
+                    hintText: 'Kata Laluan',
+                    hintStyle: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.slate400,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.all(20),
+                    suffixIcon: GestureDetector(
+                      onTap: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 16),
+                        child: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: AppColors.slate400,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+                  .animate()
+                  .fadeIn(duration: 500.ms, delay: 300.ms)
+                  .slideY(begin: 0.2, curve: Curves.easeOutCubic),
 
-              const SizedBox(height: 28),
+              const SizedBox(height: 32),
 
-              // Login button
-              PressEffect(
+              // Login Button
+              GestureDetector(
                 onTap: () => context.go('/home'),
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   decoration: BoxDecoration(
                     color: AppColors.slate900,
-                    borderRadius: BorderRadius.circular(AppConstants.radiusXL),
+                    borderRadius: BorderRadius.circular(28),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.slateShadow,
-                        blurRadius: 32,
-                        offset: const Offset(0, 12),
+                        color: AppColors.slate200,
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
                       ),
                     ],
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Masuk Sekarang', style: AppTypography.buttonLG),
-                      const SizedBox(width: 12),
-                      const Icon(LucideIcons.arrowRight, color: AppColors.white, size: 20),
-                    ],
+                  child: const Center(
+                    child: Text(
+                      'Masuk',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
               )
                   .animate()
-                  .fadeIn(duration: 600.ms, delay: 650.ms)
-                  .slideY(begin: 0.3, curve: Curves.easeOutCubic),
+                  .fadeIn(duration: 500.ms, delay: 400.ms)
+                  .slideY(begin: 0.2, curve: Curves.easeOutCubic),
             ],
           ),
         ),
       ),
     );
-  }
-
-  Widget _buildInputField({
-    required String label,
-    required String placeholder,
-    required TextEditingController controller,
-    required int delay,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 8, bottom: 8),
-          child: Text(label, style: AppTypography.labelUppercase),
-        ),
-        TextField(
-          controller: controller,
-          style: AppTypography.bodySM,
-          decoration: InputDecoration(
-            hintText: placeholder,
-            hintStyle: AppTypography.bodySM.copyWith(color: AppColors.slate300),
-            filled: true,
-            fillColor: AppColors.slate50,
-            contentPadding: const EdgeInsets.all(20),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppConstants.radiusXL),
-              borderSide: BorderSide(color: AppColors.slate100),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppConstants.radiusXL),
-              borderSide: BorderSide(color: AppColors.slate100),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppConstants.radiusXL),
-              borderSide: BorderSide(color: AppColors.primaryYellow, width: 2),
-            ),
-          ),
-        ),
-      ],
-    )
-        .animate()
-        .fadeIn(duration: 500.ms, delay: Duration(milliseconds: delay))
-        .slideY(begin: 0.2, curve: Curves.easeOutCubic);
-  }
-
-  Widget _buildPasswordField({required int delay}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 8, bottom: 8),
-          child: Text('PASSWORD', style: AppTypography.labelUppercase),
-        ),
-        TextField(
-          controller: _passwordController,
-          obscureText: _obscurePassword,
-          style: AppTypography.bodySM,
-          decoration: InputDecoration(
-            hintText: '••••••••',
-            hintStyle: AppTypography.bodySM.copyWith(color: AppColors.slate300),
-            filled: true,
-            fillColor: AppColors.slate50,
-            contentPadding: const EdgeInsets.all(20),
-            suffixIcon: GestureDetector(
-              onTap: () => setState(() => _obscurePassword = !_obscurePassword),
-              child: Padding(
-                padding: const EdgeInsets.only(right: 16),
-                child: Icon(
-                  _obscurePassword ? LucideIcons.eye : LucideIcons.eyeOff,
-                  color: AppColors.slate300,
-                  size: 20,
-                ),
-              ),
-            ),
-            suffixIconConstraints: const BoxConstraints(minHeight: 0, minWidth: 0),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppConstants.radiusXL),
-              borderSide: BorderSide(color: AppColors.slate100),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppConstants.radiusXL),
-              borderSide: BorderSide(color: AppColors.slate100),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppConstants.radiusXL),
-              borderSide: BorderSide(color: AppColors.primaryYellow, width: 2),
-            ),
-          ),
-        ),
-      ],
-    )
-        .animate()
-        .fadeIn(duration: 500.ms, delay: Duration(milliseconds: delay))
-        .slideY(begin: 0.2, curve: Curves.easeOutCubic);
   }
 }

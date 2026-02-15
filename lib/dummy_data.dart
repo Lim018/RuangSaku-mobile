@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import '../models/building.dart';
-import '../models/room.dart';
-import '../models/booking.dart';
+import 'models/building.dart';
+import 'models/room.dart';
+import 'models/booking.dart';
 import 'core/theme/app_colors.dart';
 
 class DummyData {
@@ -34,7 +34,7 @@ class DummyData {
       borderColor: Color(0xFFFEF3C7),
     ),
     Building(
-      name: 'Sastra',
+      name: 'Sastera',
       icon: LucideIcons.penTool,
       roomCount: 6,
       bgColor: AppColors.emerald50,
@@ -46,55 +46,64 @@ class DummyData {
   static const List<Room> popularRooms = [
     Room(
       id: 101,
-      name: 'Lab Robotik',
-      building: 'Teknik • Lt 2',
-      imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=400',
+      name: 'Makmal Robotik',
+      building: 'Gedung Teknik',
+      imageUrl:
+          'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=400',
       capacity: 30,
+      status: 'ready',
+      isFavorite: true,
     ),
     Room(
       id: 102,
-      name: 'R. Teori 301',
-      building: 'Teknik • Lt 3',
-      imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756ebafe3?auto=format&fit=crop&q=80&w=400',
+      name: 'Bilik Teori 301',
+      building: 'Gedung Teknik',
+      imageUrl:
+          'https://images.unsplash.com/photo-1541339907198-e08756ebafe3?auto=format&fit=crop&q=80&w=400',
       capacity: 45,
+      status: 'busy',
+      isFavorite: false,
     ),
     Room(
       id: 103,
-      name: 'Cinema Room',
-      building: 'Sastra • Lt 1',
-      imageUrl: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&q=80&w=400',
+      name: 'Bilik Seminar 2',
+      building: 'Gedung Rektorat',
+      imageUrl:
+          'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&q=80&w=400',
       capacity: 60,
+      status: 'ready',
+      isFavorite: true,
     ),
     Room(
       id: 104,
-      name: 'R. Seminar Utama',
-      building: 'Ekonomi • Lt 2',
-      imageUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=400',
+      name: 'Bilik Seminar Utama',
+      building: 'Gedung Ekonomi',
+      imageUrl:
+          'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=400',
       capacity: 80,
+      status: 'ready',
+      isFavorite: false,
     ),
   ];
 
   static const List<Booking> myBookings = [
     Booking(
-      room: 'Lab Robotik',
-      time: 'Besok, 09:00 - 12:00',
-      date: '18',
+      room: 'Makmal Robotik',
+      time: 'Hari Ini, 08:00 - 10:00',
+      date: '17',
       month: 'FEB',
-      status: 'Active',
+      status: 'Aktif',
+      statusColor: Color(0xFF10B981),
+      statusBgColor: Color(0xFFECFDF5),
     ),
     Booking(
-      room: 'R. Seminar Utama',
-      time: '22 Feb, 13:00 - 15:00',
+      room: 'Bilik Seminar Utama',
+      time: '22 Feb, 14:00 - 16:00',
       date: '22',
       month: 'FEB',
-      status: 'Upcoming',
-    ),
-    Booking(
-      room: 'Cinema Room',
-      time: '25 Feb, 10:00 - 12:00',
-      date: '25',
-      month: 'FEB',
-      status: 'Upcoming',
+      status: 'Akan Datang',
+      statusColor: Color(0xFF6366F1),
+      statusBgColor: Color(0xFFEEF2FF),
     ),
   ];
 }
