@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuangSaku - Premium Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f1f5f9;
+            user-select: none;
+        }
+        .app-container {
+            max-width: 420px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: #ffffff;
+            position: relative;
+            box-shadow: 0 0 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .screen {
+            display: none;
+            padding-bottom: 110px;
+            min-height: 100vh;
+            animation: screenIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes screenIn {
+            from { opacity: 0; transform: scale(0.98) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Staggered Animation for Cards */
+        @keyframes itemIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-item {
+            animation: itemIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        /* Premium Aesthetic Tokens */
+        .yellow-accent { background-color: #F7D448; }
+        
+        .header-curve {
+            background-color: #F7D448;
+            border-bottom-left-radius: 45px;
+            border-bottom-right-radius: 45px;
+            padding: 50px 24px 40px 24px;
+            transition: all 0.3s ease;
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Floating Animation */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Interactive States */
+        .press-effect:active {
+            transform: scale(0.96);
+            filter: brightness(0.95);
+        }
+        .press-effect {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* Custom Checkmark Animation */
+        .check-draw {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: draw 0.6s ease-out forwards 0.2s;
+        }
+        @keyframes draw { to { stroke-dashoffset: 0; } }
+    </style>
+</head>
+<body>
+
+<div class="app-container" id="app">
+    <!-- --- SCREEN: SPLASH --- -->
+    <section id="screen-splash" class="screen active flex flex-col items-center justify-center p-8 bg-white">
+        <div class="floating w-36 h-36 yellow-accent rounded-[44px] flex items-center justify-center mb-10 shadow-2xl shadow-yellow-300">
+            <i data-lucide="layout-grid" class="w-16 h-16 text-black"></i>
+        </div>
+        <h1 class="text-4xl font-black text-slate-900 mb-2">RuangSaku</h1>
+        <p class="text-slate-400 font-semibold tracking-wide">SMART ROOM BOOKING</p>
+        <div class="mt-24">
+            <button onclick="navigateTo('login')" class="w-14 h-14 rounded-full bg-slate-50 flex items-center justify-center animate-bounce border border-slate-100">
+                <i data-lucide="chevron-right" class="text-slate-900"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- --- SCREEN: LOGIN --- -->
+    <section id="screen-login" class="screen p-8 flex flex-col justify-center">
+        <div class="mb-14">
+            <div class="w-12 h-12 yellow-accent rounded-2xl flex items-center justify-center mb-6">
+                <i data-lucide="shield-check" class="text-black w-6 h-6"></i>
+            </div>
+            <h2 class="text-4xl font-black text-slate-900 leading-tight tracking-tight">Ekses Penuh<br>RuangSaku.</h2>
+            <p class="text-slate-400 mt-4 font-medium text-lg">Kelola pemesanan ruangan Anda dengan mudah dan aman.</p>
+        </div>
+        <div class="space-y-5">
+            <div class="space-y-2 animate-item" style="animation-delay: 0.1s">
+                <label class="text-xs font-black text-slate-400 uppercase ml-2 tracking-widest">Single Sign On</label>
+                <input type="text" placeholder="nim@student.univ.ac.id" class="w-full p-5 bg-slate-50 border border-slate-100 rounded-[28px] focus:ring-4 focus:ring-yellow-400/20 focus:bg-white outline-none transition-all font-semibold text-slate-700">
+            </div>
+            <div class="space-y-2 animate-item" style="animation-delay: 0.2s">
+                <label class="text-xs font-black text-slate-400 uppercase ml-2 tracking-widest">Password</label>
+                <div class="relative">
+                    <input type="password" placeholder="••••••••" class="w-full p-5 bg-slate-50 border border-slate-100 rounded-[28px] focus:ring-4 focus:ring-yellow-400/20 focus:bg-white outline-none transition-all font-semibold text-slate-700">
+                    <i data-lucide="eye" class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 w-5 h-5"></i>
+                </div>
+            </div>
+            <button onclick="navigateTo('home')" class="press-effect w-full bg-slate-900 text-white p-5 rounded-[28px] font-extrabold text-lg shadow-2xl shadow-slate-200 mt-6 flex items-center justify-center space-x-3">
+                <span>Masuk Sekarang</span>
+                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- --- SCREEN: HOME --- -->
+    <section id="screen-home" class="screen">
+        <div class="header-curve">
+            <div class="flex justify-between items-center mb-10">
+                <div class="animate-item">
+                    <p class="text-[10px] font-black text-slate-800 uppercase tracking-[0.2em] mb-1">UNIVERSITAS PINTAR</p>
+                    <h2 class="text-3xl font-black text-slate-900 leading-none tracking-tighter">RuangSaku</h2>
+                </div>
+                <div class="w-12 h-12 bg-white rounded-2xl p-1 shadow-lg shadow-yellow-600/20 border-2 border-white/50 animate-item">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="w-full h-full rounded-xl" alt="avatar">
+                </div>
+            </div>
+            <div class="relative animate-item" style="animation-delay: 0.1s">
+                <i data-lucide="search" class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
+                <input type="text" placeholder="Cari Kode Ruang atau Gedung..." class="w-full pl-14 pr-6 py-5 bg-white rounded-[28px] shadow-xl shadow-yellow-600/10 border-none outline-none focus:ring-4 focus:ring-slate-900/5 transition-all font-semibold text-slate-700">
+            </div>
+        </div>
+
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6 animate-item" style="animation-delay: 0.2s">
+                <h3 class="text-xl font-black text-slate-900">Rekomendasi</h3>
+                <div class="flex items-center space-x-1 text-indigo-600 font-bold text-xs">
+                    <span>Filter</span>
+                    <i data-lucide="sliders-horizontal" class="w-3 h-3"></i>
+                </div>
+            </div>
+
+            <!-- Horizontal Scroll Cards -->
+            <div class="flex space-x-5 overflow-x-auto hide-scrollbar pb-6 mb-4 animate-item" style="animation-delay: 0.3s" id="horizontal-rooms">
+                <!-- Content via JS -->
+            </div>
+
+            <div class="flex items-center justify-between mb-6 animate-item" style="animation-delay: 0.4s">
+                <h3 class="text-xl font-black text-slate-900 tracking-tight">Gedung Utama</h3>
+                <i data-lucide="layout-grid" class="w-5 h-5 text-slate-300"></i>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 animate-item" style="animation-delay: 0.5s" id="building-grid">
+                <!-- Content via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- --- SCREEN: DETAIL & BOOKING --- -->
+    <section id="screen-detail" class="screen bg-white">
+        <div class="relative h-80 overflow-hidden rounded-b-[50px]">
+            <img id="detail-img" src="" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <button onclick="navigateTo('home')" class="press-effect absolute top-8 left-6 w-12 h-12 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white border border-white/30 z-10">
+                <i data-lucide="chevron-left" class="w-6 h-6"></i>
+            </button>
+            <div class="absolute bottom-12 left-8">
+                <div id="detail-tag" class="px-3 py-1 bg-yellow-400 text-black rounded-lg text-[10px] font-black uppercase mb-3 inline-block shadow-lg shadow-yellow-400/20">TERSEDIA</div>
+                <h2 id="detail-title" class="text-3xl font-black text-white leading-tight tracking-tight"></h2>
+                <div class="flex items-center space-x-2 text-white/70 mt-1">
+                    <i data-lucide="map-pin" class="w-3 h-3"></i>
+                    <p id="detail-subtitle" class="font-bold text-sm"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-8">
+            <div class="grid grid-cols-3 gap-4 mb-10 text-center animate-item">
+                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                    <i data-lucide="users" class="w-5 h-5 text-indigo-500 mx-auto mb-2"></i>
+                    <p class="text-[8px] font-black text-slate-400 uppercase mb-1">Kapasitas</p>
+                    <p class="font-bold text-slate-800 text-xs">45 Pax</p>
+                </div>
+                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                    <i data-lucide="airplay" class="w-5 h-5 text-emerald-500 mx-auto mb-2"></i>
+                    <p class="text-[8px] font-black text-slate-400 uppercase mb-1">Fasilitas</p>
+                    <p class="font-bold text-slate-800 text-xs">Smart TV</p>
+                </div>
+                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                    <i data-lucide="wifi" class="w-5 h-5 text-amber-500 mx-auto mb-2"></i>
+                    <p class="text-[8px] font-black text-slate-400 uppercase mb-1">WiFi 6</p>
+                    <p class="font-bold text-slate-800 text-xs">1 Gbps</p>
+                </div>
+            </div>
+
+            <div class="space-y-6 mb-12 animate-item" style="animation-delay: 0.2s">
+                <h4 class="text-xl font-black text-slate-900 tracking-tight">Pilih Waktu</h4>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="press-effect col-span-2 p-5 bg-slate-50 rounded-[24px] border border-slate-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase mb-1">Tanggal</p>
+                            <p class="font-bold text-slate-700">Senin, 17 Feb 2026</p>
+                        </div>
+                        <i data-lucide="calendar" class="w-5 h-5 text-slate-300"></i>
+                    </div>
+                    <div class="press-effect p-5 bg-slate-50 rounded-[24px] border border-slate-100">
+                        <p class="text-[10px] font-black text-slate-400 uppercase mb-1 text-center">Mulai</p>
+                        <p class="font-bold text-slate-700 text-center">08:00 WIB</p>
+                    </div>
+                    <div class="press-effect p-5 bg-slate-50 rounded-[24px] border border-slate-100">
+                        <p class="text-[10px] font-black text-slate-400 uppercase mb-1 text-center">Selesai</p>
+                        <p class="font-bold text-slate-700 text-center">10:00 WIB</p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="confirmBooking()" class="press-effect w-full bg-slate-900 text-white py-5 rounded-[32px] font-extrabold text-lg shadow-2xl shadow-slate-200 active:bg-black">Konfirmasi Sekarang</button>
+        </div>
+    </section>
+
+    <!-- --- SCREEN: JADWAL SAYA --- -->
+    <section id="screen-jadwal" class="screen p-8">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-3xl font-black text-slate-900 tracking-tight">Jadwal Saya</h2>
+            <div class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
+                <i data-lucide="history" class="w-5 h-5"></i>
+            </div>
+        </div>
+        <div class="space-y-5" id="my-schedule-list">
+            <!-- Content via JS -->
+        </div>
+    </section>
+
+    <!-- Bottom Navigation -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 max-w-[420px] mx-auto glass-nav h-24 flex justify-around items-center px-8 z-40">
+        <button onclick="navigateTo('home')" class="press-effect nav-btn p-3 rounded-2xl flex flex-col items-center" data-target="home">
+            <i data-lucide="home" class="w-6 h-6"></i>
+        </button>
+        <button onclick="navigateTo('jadwal')" class="press-effect nav-btn p-3 rounded-2xl flex flex-col items-center text-slate-300" data-target="jadwal">
+            <i data-lucide="calendar" class="w-6 h-6"></i>
+        </button>
+        <button class="press-effect nav-btn p-3 rounded-2xl flex flex-col items-center text-slate-300">
+            <i data-lucide="message-square" class="w-6 h-6"></i>
+        </button>
+        <button class="press-effect nav-btn p-3 rounded-2xl flex flex-col items-center text-slate-300">
+            <i data-lucide="user" class="w-6 h-6"></i>
+        </button>
+    </nav>
+
+    <!-- Premium Toast Success -->
+    <div id="toast" class="fixed top-12 left-1/2 -translate-x-1/2 bg-slate-900 text-white pl-6 pr-8 py-4 rounded-[24px] text-sm font-bold shadow-2xl opacity-0 pointer-events-none transition-all z-50 flex items-center space-x-4 border border-white/10">
+        <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path class="check-draw" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+            </svg>
+        </div>
+        <div class="flex flex-col">
+            <span class="text-white text-xs font-black uppercase">Berhasil</span>
+            <span class="text-slate-400 font-medium">Ruang telah dipesan</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Configuration Data
+    const buildings = [
+        { name: "Teknik", icon: "cpu", count: 12, color: "bg-rose-50", text: "text-rose-600", border: "border-rose-100" },
+        { name: "Ekonomi", icon: "bar-chart-3", count: 8, color: "bg-indigo-50", text: "text-indigo-600", border: "border-indigo-100" },
+        { name: "Hukum", icon: "scale", count: 5, color: "bg-amber-50", text: "text-amber-600", border: "border-amber-100" },
+        { name: "Sastra", icon: "pen-tool", count: 6, color: "bg-emerald-50", text: "text-emerald-600", border: "border-emerald-100" }
+    ];
+
+    const popularRooms = [
+        { id: 101, name: "Lab Robotik", building: "Teknik • Lt 2", img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=400", cap: 30 },
+        { id: 102, name: "R. Teori 301", building: "Teknik • Lt 3", img: "https://images.unsplash.com/photo-1541339907198-e08756ebafe3?auto=format&fit=crop&q=80&w=400", cap: 45 },
+        { id: 103, name: "Cinema Room", building: "Sastra • Lt 1", img: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&q=80&w=400", cap: 60 }
+    ];
+
+    const myBookings = [
+        { room: "Lab Robotik", time: "Besok, 09:00 - 12:00", date: "18", month: "FEB", status: "Active" },
+        { room: "R. Seminar Utama", time: "22 Feb, 13:00 - 15:00", date: "22", month: "FEB", status: "Upcoming" }
+    ];
+
+    // Navigation logic with enhanced state management
+    function navigateTo(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(`screen-${screenId}`).classList.add('active');
+        
+        const nav = document.getElementById('bottom-nav');
+        nav.style.display = (screenId === 'splash' || screenId === 'login') ? 'none' : 'flex';
+
+        // Update Nav Active State
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            if (btn.dataset.target === screenId) {
+                btn.classList.add('yellow-accent', 'text-slate-900', 'shadow-xl', 'shadow-yellow-400/20');
+                btn.classList.remove('text-slate-300');
+            } else {
+                btn.classList.remove('yellow-accent', 'text-slate-900', 'shadow-xl', 'shadow-yellow-400/20');
+                btn.classList.add('text-slate-300');
+            }
+        });
+
+        lucide.createIcons();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Dynamic Render Logic
+    function renderHome() {
+        // Horizontal Recommendation Cards
+        const horizontalContainer = document.getElementById('horizontal-rooms');
+        horizontalContainer.innerHTML = popularRooms.map((room, index) => `
+            <div onclick="openDetail(${room.id})" class="press-effect min-w-[260px] bg-white rounded-[40px] p-3 shadow-xl shadow-slate-200/40 border border-slate-50">
+                <div class="relative mb-4">
+                    <img src="${room.img}" class="w-full h-40 object-cover rounded-[32px]">
+                    <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-black">
+                        ${room.cap} PAX
+                    </div>
+                </div>
+                <div class="px-3 pb-3">
+                    <h4 class="font-black text-slate-900 text-base leading-tight">${room.name}</h4>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase mt-1 tracking-wide">${room.building}</p>
+                </div>
+            </div>
+        `).join('');
+
+        // Building Grid with staggered delay
+        const buildingGrid = document.getElementById('building-grid');
+        buildingGrid.innerHTML = buildings.map((b, i) => `
+            <div class="press-effect p-6 bg-white border ${b.border} rounded-[32px] shadow-sm hover:shadow-lg transition-all flex flex-col items-center">
+                <div class="w-14 h-14 ${b.color} rounded-[22px] flex items-center justify-center mb-4">
+                    <i data-lucide="${b.icon}" class="${b.text} w-6 h-6"></i>
+                </div>
+                <h4 class="font-black text-slate-900 text-xs mb-1 uppercase tracking-tighter">${b.name}</h4>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">${b.count} RUANG</p>
+            </div>
+        `).join('');
+    }
+
+    function renderJadwal() {
+        const list = document.getElementById('my-schedule-list');
+        list.innerHTML = myBookings.map((b, i) => `
+            <div class="animate-item bg-white p-6 rounded-[35px] border border-slate-50 shadow-xl shadow-slate-200/20 flex items-center space-x-5" style="animation-delay: ${i * 0.1}s">
+                <div class="w-16 h-16 bg-slate-900 rounded-[22px] flex flex-col items-center justify-center text-white">
+                    <span class="text-[8px] font-black text-white/50 uppercase leading-none">${b.month}</span>
+                    <span class="text-xl font-black">${b.date}</span>
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-black text-slate-900 text-base leading-tight">${b.room}</h4>
+                    <p class="text-xs font-bold text-slate-400 mt-0.5">${b.time}</p>
+                </div>
+                <div class="w-2 h-2 rounded-full ${b.status === 'Active' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300'}"></div>
+            </div>
+        `).join('');
+    }
+
+    function openDetail(id) {
+        const room = popularRooms.find(r => r.id === id);
+        if(!room) return;
+        
+        document.getElementById('detail-title').innerText = room.name;
+        document.getElementById('detail-subtitle').innerText = room.building;
+        document.getElementById('detail-img').src = room.img;
+        
+        navigateTo('detail');
+    }
+
+    function confirmBooking() {
+        const toast = document.getElementById('toast');
+        toast.style.opacity = '1';
+        toast.style.transform = 'translate(-50%, 20px)';
+        
+        // Trigger checkmark animation by re-adding the element
+        const svg = toast.querySelector('svg');
+        const newSvg = svg.cloneNode(true);
+        svg.parentNode.replaceChild(newSvg, svg);
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translate(-50%, -10px)';
+            navigateTo('jadwal');
+        }, 2200);
+    }
+
+    // Initialize
+    window.onload = () => {
+        renderHome();
+        renderJadwal();
+        lucide.createIcons();
+    };
+</script>
+</body>
+</html>
