@@ -3,8 +3,9 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_typography.dart';
 import '../../dummy_data.dart';
-import '../../shared/widgets/booking_bottom_sheet.dart';
+import '../../models/room.dart';
 import '../../shared/widgets/success_toast.dart';
 
 class RoomDetailScreen extends StatefulWidget {
@@ -16,363 +17,360 @@ class RoomDetailScreen extends StatefulWidget {
 }
 
 class _RoomDetailScreenState extends State<RoomDetailScreen> {
-  int _selectedDateIndex = 0;
-  int _selectedSlotIndex = 0;
+  int _selectedDate = 0;
+  int _selectedSession = 0;
+  bool _isFav = false;
 
-  final _dates = [
-    {'day': 'ISN', 'date': '17'},
-    {'day': 'SEL', 'date': '18'},
-    {'day': 'RAB', 'date': '19'},
-    {'day': 'KHA', 'date': '20'},
+  late Room room;
+
+  final dates = [
+    {'day': 'Sen', 'date': '17'},
+    {'day': 'Sel', 'date': '18'},
+    {'day': 'Rab', 'date': '19'},
+    {'day': 'Kam', 'date': '20'},
+    {'day': 'Jum', 'date': '21'},
+    {'day': 'Sab', 'date': '22'},
   ];
 
-  final _slots = [
-    {'label': 'Pagi', 'time': '08:00 - 10:00'},
-    {'label': 'Tengahari', 'time': '11:00 - 13:00'},
+  final sessions = [
+    {'id': 1, 'time': '08:00 - 10:00'},
+    {'id': 2, 'time': '10:00 - 12:00'},
+    {'id': 3, 'time': '13:00 - 15:00'},
+    {'id': 4, 'time': '15:00 - 17:00'},
   ];
 
   @override
-  Widget build(BuildContext context) {
-    final room = DummyData.popularRooms.firstWhere(
+  void initState() {
+    super.initState();
+    room = DummyData.popularRooms.firstWhere(
       (r) => r.id == widget.roomId,
       orElse: () => DummyData.popularRooms.first,
     );
+    _isFav = room.isFavorite;
+  }
 
+  void _handleBooking() {
+    SuccessToast.show(context,
+        message: 'Berhasil! ${room.name} telah dipesan.');
+    Future.delayed(const Duration(milliseconds: 1200), () {
+      if (mounted) context.go('/booked');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Hero Image
+            // —— Hero Image ——
             Stack(
               children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(50),
-                    bottomRight: Radius.circular(50),
-                  ),
-                  child: SizedBox(
-                    height: 260,
-                    width: double.infinity,
-                    child: Image.network(
-                      room.imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
-                        color: AppColors.slate200,
-                        child: const Icon(LucideIcons.image, size: 48),
-                      ),
+                Image.network(
+                  room.imageUrl,
+                  height: 288,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) =>
+                      Container(height: 288, color: AppColors.slate200),
+                ),
+                Container(
+                  height: 288,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.8)
+                      ],
                     ),
                   ),
                 ),
-                // Gradient overlay
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(50),
-                        bottomRight: Radius.circular(50),
-                      ),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withValues(alpha: 0.8),
-                        ],
-                        stops: const [0.3, 1.0],
-                      ),
-                    ),
-                  ),
-                ),
-                // Back button
-                Positioned(
-                  top: 48,
-                  left: 24,
-                  child: GestureDetector(
-                    onTap: () => context.pop(),
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.3),
+                // Back + Fav
+                SafeArea(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _glassBtnWidget(
+                          icon: LucideIcons.chevronLeft,
+                          onTap: () => context.pop(),
                         ),
-                      ),
-                      child: const Icon(
-                        LucideIcons.chevronLeft,
-                        size: 20,
-                        color: Colors.white,
-                      ),
+                        _glassBtnWidget(
+                          icon: LucideIcons.heart,
+                          color: _isFav ? AppColors.rose500 : Colors.white,
+                          filled: _isFav,
+                          onTap: () => setState(() => _isFav = !_isFav),
+                        ),
+                      ],
                     ),
                   ),
-                )
-                    .animate()
-                    .fadeIn(duration: 400.ms)
-                    .slideX(begin: -0.3, curve: Curves.easeOutCubic),
-                // Title overlay
+                ),
                 Positioned(
-                  bottom: 40,
-                  left: 32,
+                  bottom: 24,
+                  left: 24,
+                  right: 24,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.emerald500,
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                                color:
+                                    AppColors.emerald500.withValues(alpha: 0.3),
+                                blurRadius: 12)
+                          ],
+                        ),
+                        child: const Text(
+                          'TERSEDIA',
+                          style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                              letterSpacing: 2),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       Text(
                         room.name,
                         style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
-                          height: 1.1,
-                        ),
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white),
                       ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          // Pulsing green dot
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF4ADE80),
-                              borderRadius: BorderRadius.circular(4),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF4ADE80)
-                                      .withValues(alpha: 0.7),
-                                  blurRadius: 6,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            room.building.toUpperCase(),
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white.withValues(alpha: 0.7),
-                              letterSpacing: 1.5,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        room.building.toUpperCase(),
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white.withValues(alpha: 0.7)),
                       ),
                     ],
                   ),
-                )
-                    .animate()
-                    .fadeIn(duration: 500.ms, delay: 200.ms)
-                    .slideY(begin: 0.2, curve: Curves.easeOutCubic),
+                ),
               ],
             ),
 
-            // Content
             Padding(
-              padding: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Date Selector
-                  const Text(
-                    'Pilih Tarikh',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w900,
-                      color: AppColors.slate900,
-                      letterSpacing: -0.3,
-                    ),
-                  )
+                  // —— Date Picker ——
+                  Text('Pilih Tanggal',
+                          style:
+                              AppTypography.headingBlack.copyWith(fontSize: 18))
                       .animate()
-                      .fadeIn(duration: 500.ms, delay: 300.ms)
-                      .slideY(begin: 0.15, curve: Curves.easeOutCubic),
+                      .fadeIn(delay: 200.ms),
+
                   const SizedBox(height: 16),
+
                   SizedBox(
-                    height: 96,
+                    height: 80,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
-                      itemCount: _dates.length,
+                      itemCount: dates.length,
                       separatorBuilder: (_, __) => const SizedBox(width: 12),
-                      itemBuilder: (context, index) {
-                        final isActive = index == _selectedDateIndex;
+                      itemBuilder: (context, i) {
+                        final isActive = _selectedDate == i;
                         return GestureDetector(
-                          onTap: () =>
-                              setState(() => _selectedDateIndex = index),
+                          onTap: () => setState(() => _selectedDate = i),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
-                            width: 75,
+                            width: 70,
                             decoration: BoxDecoration(
                               color: isActive
-                                  ? AppColors.slate900
+                                  ? AppColors.blue600
                                   : AppColors.slate50,
-                              borderRadius: BorderRadius.circular(30),
-                              border: isActive
-                                  ? null
-                                  : Border.all(color: AppColors.slate100),
-                              boxShadow: isActive
-                                  ? [
-                                      BoxShadow(
-                                        color: AppColors.slate200,
-                                        blurRadius: 20,
-                                        offset: const Offset(0, 8),
-                                      ),
-                                    ]
-                                  : [],
+                              borderRadius: BorderRadius.circular(24),
+                              border: Border.all(
+                                  color: isActive
+                                      ? AppColors.blue600
+                                      : AppColors.slate100),
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  _dates[index]['day']!,
+                                  dates[i]['day']!,
                                   style: TextStyle(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w900,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
                                     color: isActive
                                         ? Colors.white.withValues(alpha: 0.6)
                                         : AppColors.slate400,
-                                    letterSpacing: 0.5,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  _dates[index]['date']!,
+                                  dates[i]['date']!,
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w900,
                                     color: isActive
                                         ? Colors.white
-                                        : AppColors.slate400,
+                                        : AppColors.slate900,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        );
+                        ).animate().fadeIn(delay: (300 + i * 50).ms);
                       },
                     ),
-                  )
-                      .animate()
-                      .fadeIn(duration: 500.ms, delay: 400.ms)
-                      .slideY(begin: 0.15, curve: Curves.easeOutCubic),
+                  ),
 
                   const SizedBox(height: 32),
 
-                  // Time Slots
-                  const Text(
-                    'Slot Masa',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w900,
-                      color: AppColors.slate900,
-                      letterSpacing: -0.3,
-                    ),
-                  )
+                  // —— Session Picker ——
+                  Text('Pilih Sesi',
+                          style:
+                              AppTypography.headingBlack.copyWith(fontSize: 18))
                       .animate()
-                      .fadeIn(duration: 500.ms, delay: 500.ms)
-                      .slideY(begin: 0.15, curve: Curves.easeOutCubic),
+                      .fadeIn(delay: 500.ms),
+
                   const SizedBox(height: 16),
-                  Row(
-                    children: List.generate(_slots.length, (index) {
-                      final isActive = index == _selectedSlotIndex;
-                      return Expanded(
-                        child: GestureDetector(
-                          onTap: () =>
-                              setState(() => _selectedSlotIndex = index),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            margin: EdgeInsets.only(right: index == 0 ? 16 : 0),
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
+
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 2.2,
+                    ),
+                    itemCount: sessions.length,
+                    itemBuilder: (context, i) {
+                      final isActive = _selectedSession == i;
+                      return GestureDetector(
+                        onTap: () => setState(() => _selectedSession = i),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          decoration: BoxDecoration(
+                            color:
+                                isActive ? AppColors.slate800 : AppColors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
                               color: isActive
-                                  ? AppColors.slate900
-                                  : AppColors.slate50,
-                              borderRadius: BorderRadius.circular(16),
-                              border: isActive
-                                  ? null
-                                  : Border.all(color: AppColors.slate100),
-                              boxShadow: isActive
-                                  ? [
-                                      BoxShadow(
-                                        color: AppColors.slate200,
-                                        blurRadius: 16,
-                                        offset: const Offset(0, 6),
-                                      ),
-                                    ]
-                                  : [],
+                                  ? AppColors.slate800
+                                  : AppColors.slate100,
+                              width: 2,
                             ),
-                            child: Column(
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'SESI ${sessions[i]['id']}',
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w900,
+                                  color: isActive
+                                      ? Colors.white.withValues(alpha: 0.5)
+                                      : AppColors.slate400,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                sessions[i]['time'] as String,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w900,
+                                  color: isActive
+                                      ? Colors.white
+                                      : AppColors.slate900,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ).animate().fadeIn(delay: (600 + i * 60).ms);
+                    },
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  // —— Validation + Book Button ——
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: AppColors.slate50,
+                      borderRadius: BorderRadius.circular(32),
+                      border: Border.all(color: AppColors.slate100),
+                      boxShadow: [
+                        BoxShadow(color: AppColors.slateShadow, blurRadius: 8)
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'STATUS VALIDASI',
+                              style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.slate400,
+                                  letterSpacing: 2),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
                               children: [
-                                Text(
-                                  _slots[index]['label']!.toUpperCase(),
-                                  style: TextStyle(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.w900,
-                                    color: isActive
-                                        ? Colors.white.withValues(alpha: 0.4)
-                                        : AppColors.slate400,
-                                    letterSpacing: 0.5,
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.emerald500,
+                                    shape: BoxShape.circle,
                                   ),
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  _slots[index]['time']!,
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'BEBAS KONFLIK',
                                   style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                    color: isActive
-                                        ? Colors.white
-                                        : AppColors.slate700,
-                                  ),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w900,
+                                      color: AppColors.emerald600),
                                 ),
                               ],
                             ),
+                          ],
+                        ),
+                        ElevatedButton(
+                          onPressed: _handleBooking,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.blue600,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 32, vertical: 16),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16)),
+                            elevation: 8,
+                            shadowColor: AppColors.blue200,
+                          ),
+                          child: const Text(
+                            'Pesan Sekarang',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w900, fontSize: 14),
                           ),
                         ),
-                      );
-                    }),
-                  )
-                      .animate()
-                      .fadeIn(duration: 500.ms, delay: 600.ms)
-                      .slideY(begin: 0.15, curve: Curves.easeOutCubic),
-
-                  const SizedBox(height: 40),
-
-                  // CTA
-                  GestureDetector(
-                    onTap: () => _handleBooking(room.name),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      decoration: BoxDecoration(
-                        color: AppColors.slate900,
-                        borderRadius: BorderRadius.circular(32),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.slate200,
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'Tempah Sekarang',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+                      ],
                     ),
-                  )
-                      .animate()
-                      .fadeIn(duration: 500.ms, delay: 700.ms)
-                      .slideY(begin: 0.2, curve: Curves.easeOutCubic),
-
-                  const SizedBox(height: 40),
+                  ).animate().fadeIn(delay: 800.ms).slideY(begin: 0.1),
                 ],
               ),
             ),
@@ -382,21 +380,24 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
     );
   }
 
-  Future<void> _handleBooking(String roomName) async {
-    final dateText = '${_dates[_selectedDateIndex]['date']} Feb';
-    final timeText = _slots[_selectedSlotIndex]['time']!;
-    final dateTime = '$dateText • $timeText';
-
-    final confirmed = await BookingBottomSheet.show(
-      context,
-      roomName: roomName,
-      dateTime: dateTime,
+  Widget _glassBtnWidget({
+    required IconData icon,
+    Color color = Colors.white,
+    bool filled = false,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+        ),
+        child: Icon(icon, size: 24, color: color),
+      ),
     );
-
-    if (confirmed == true && mounted) {
-      SuccessToast.show(context, message: 'Tempahan disahkan!');
-      await Future.delayed(const Duration(milliseconds: 1500));
-      if (mounted) context.go('/schedule');
-    }
   }
 }

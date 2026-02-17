@@ -12,7 +12,7 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.white,
       textTheme: GoogleFonts.plusJakartaSansTextTheme(),
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primaryYellow,
+        seedColor: AppColors.primaryBlue,
         brightness: Brightness.light,
       ),
       splashFactory: InkSparkle.splashFactory,

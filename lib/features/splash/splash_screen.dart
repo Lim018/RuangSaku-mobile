@@ -4,108 +4,79 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
-import '../../core/constants/app_constants.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 2500), () {
+      if (mounted) context.go('/login');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
-      body: SafeArea(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppColors.primaryBlue, AppColors.primaryBlueDark],
+          ),
+        ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Floating icon
               Container(
-                width: AppConstants.splashIconSize,
-                height: AppConstants.splashIconSize,
+                width: 96,
+                height: 96,
                 decoration: BoxDecoration(
-                  color: AppColors.primaryYellow,
-                  borderRadius: BorderRadius.circular(AppConstants.radiusIcon),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primaryYellow.withOpacity(0.4),
-                      blurRadius: 40,
-                      offset: const Offset(0, 16),
-                    ),
-                  ],
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(32),
+                  border:
+                      Border.all(color: Colors.white.withValues(alpha: 0.3)),
                 ),
                 child: const Icon(
                   LucideIcons.layoutGrid,
-                  size: 64,
-                  color: AppColors.slate900,
+                  size: 48,
+                  color: Colors.white,
                 ),
               )
-                  .animate(
-                    onPlay: (c) => c.repeat(reverse: true),
-                  )
-                  .moveY(
-                    begin: 0,
-                    end: -12,
-                    duration: const Duration(milliseconds: 2000),
-                    curve: Curves.easeInOut,
-                  ),
-
-              const SizedBox(height: 40),
-
-              // Title
+                  .animate(onPlay: (c) => c.repeat(reverse: true))
+                  .fadeIn(duration: 1500.ms)
+                  .scale(
+                      begin: const Offset(0.95, 0.95),
+                      end: const Offset(1.05, 1.05)),
+              const SizedBox(height: 24),
               Text(
                 'RuangSaku',
-                style: AppTypography.headingBlack.copyWith(fontSize: 40),
-              )
-                  .animate()
-                  .fadeIn(duration: 600.ms, delay: 300.ms)
-                  .slideY(begin: 0.3, curve: Curves.easeOutCubic),
-
+                style: AppTypography.headingBlack.copyWith(
+                  fontSize: 30,
+                  color: Colors.white,
+                  letterSpacing: -1,
+                ),
+              ).animate().fadeIn(delay: 300.ms, duration: 600.ms),
               const SizedBox(height: 8),
-
-              // Tagline
               Text(
-                'SMART ROOM BOOKING',
-                style: AppTypography.labelUppercase.copyWith(
-                  color: AppColors.slate400,
-                  fontWeight: FontWeight.w600,
+                'SMART CAMPUS SOLUTION',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white.withValues(alpha: 0.6),
                   letterSpacing: 4,
                 ),
-              )
-                  .animate()
-                  .fadeIn(duration: 600.ms, delay: 500.ms)
-                  .slideY(begin: 0.3, curve: Curves.easeOutCubic),
-
-              const SizedBox(height: 96),
-
-              // Arrow button
-              GestureDetector(
-                onTap: () => context.go('/login'),
-                child: Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: AppColors.slate50,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.slate100),
-                  ),
-                  child: const Icon(
-                    LucideIcons.chevronRight,
-                    color: AppColors.slate900,
-                  ),
-                ),
-              )
-                  .animate(
-                    onPlay: (c) => c.repeat(reverse: true),
-                  )
-                  .moveX(
-                    begin: 0,
-                    end: 6,
-                    duration: const Duration(milliseconds: 1200),
-                    curve: Curves.easeInOut,
-                  )
-                  .animate()
-                  .fadeIn(duration: 600.ms, delay: 800.ms)
-                  .scale(begin: const Offset(0.5, 0.5), curve: Curves.easeOutBack),
+              ).animate().fadeIn(delay: 500.ms, duration: 600.ms),
             ],
           ),
         ),

@@ -2,125 +2,122 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_typography.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.primaryYellow,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(45),
-          bottomRight: Radius.circular(45),
-        ),
-      ),
-      padding: const EdgeInsets.fromLTRB(24, 56, 24, 40),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'SELAMAT PAGI,',
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w900,
-                      color: AppColors.slate800.withValues(alpha: 0.6),
-                      letterSpacing: 2,
-                    ),
-                  )
-                      .animate()
-                      .fadeIn(duration: 500.ms)
-                      .slideX(begin: -0.2, curve: Curves.easeOutCubic),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'Arif Rahman',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w900,
-                      color: AppColors.slate900,
-                      height: 1,
-                    ),
-                  )
-                      .animate()
-                      .fadeIn(duration: 500.ms, delay: 100.ms)
-                      .slideX(begin: -0.2, curve: Curves.easeOutCubic),
-                ],
-              ),
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.5),
-                    width: 2,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primaryYellow.withValues(alpha: 0.3),
-                      blurRadius: 16,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(14),
-                  child: Image.network(
-                    'https://api.dicebear.com/7.x/avataaars/svg?seed=Arif',
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const Icon(
-                      LucideIcons.user,
-                      color: AppColors.slate400,
-                    ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Greeting row
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'SELAMAT PAGI,',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.slate400,
+                    letterSpacing: 3,
                   ),
                 ),
-              ).animate().fadeIn(duration: 500.ms, delay: 200.ms).scale(
-                  begin: const Offset(0.5, 0.5), curve: Curves.easeOutBack),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(28),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFB8860B).withValues(alpha: 0.1),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
+                const SizedBox(height: 4),
+                Text(
+                  'Abdul Alim',
+                  style: AppTypography.headingBlack.copyWith(fontSize: 24),
                 ),
               ],
             ),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Cari gedung atau bilik...',
-                hintStyle: TextStyle(
-                  color: AppColors.slate400,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 12),
-                  child: Icon(LucideIcons.search,
-                      color: AppColors.slate400, size: 20),
-                ),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 20),
+            // Bell icon
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.slate100),
+                boxShadow: [
+                  BoxShadow(
+                      color: AppColors.slateShadow,
+                      blurRadius: 8,
+                      offset: const Offset(0, 2)),
+                ],
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  const Icon(LucideIcons.bell,
+                      size: 24, color: AppColors.slate700),
+                  Positioned(
+                    top: 14,
+                    right: 14,
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: AppColors.amber500,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.white, width: 2),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          )
-              .animate()
-              .fadeIn(duration: 500.ms, delay: 200.ms)
-              .slideY(begin: 0.2, curve: Curves.easeOutCubic),
-        ],
-      ),
+          ],
+        ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.1),
+
+        const SizedBox(height: 24),
+
+        // Search bar
+        Container(
+          height: 56,
+          decoration: BoxDecoration(
+            color: AppColors.slate50,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.slate100),
+          ),
+          child: Row(
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(left: 16),
+                child: Icon(LucideIcons.search,
+                    size: 20, color: AppColors.slate400),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Cari ruangan atau gedung...',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.slate400,
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.all(4),
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.blue600,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(LucideIcons.slidersHorizontal,
+                    size: 16, color: Colors.white),
+              ),
+            ],
+          ),
+        ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+      ],
     );
   }
 }

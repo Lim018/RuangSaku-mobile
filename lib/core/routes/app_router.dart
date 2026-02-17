@@ -4,8 +4,10 @@ import '../../features/splash/splash_screen.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/room_detail/room_detail_screen.dart';
-import '../../features/schedule/schedule_screen.dart';
+import '../../features/explore/explore_screen.dart';
 import '../../features/favorites/favorites_screen.dart';
+import '../../features/booked/booked_screen.dart';
+import '../../features/booked/booked_detail_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../shared/widgets/bottom_nav_bar.dart';
 import '../../core/constants/app_constants.dart';
@@ -35,9 +37,19 @@ final GoRouter appRouter = GoRouter(
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const HomeScreen(),
             transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
+            transitionDuration: AppConstants.screenTransition,
+          ),
+        ),
+        GoRoute(
+          path: '/explore',
+          pageBuilder: (context, state) => CustomTransitionPage(
+            child:
+                ExploreScreen(buildingFilter: state.uri.queryParameters['bid']),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
             transitionDuration: AppConstants.screenTransition,
           ),
         ),
@@ -46,20 +58,18 @@ final GoRouter appRouter = GoRouter(
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const FavoritesScreen(),
             transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
             transitionDuration: AppConstants.screenTransition,
           ),
         ),
         GoRoute(
-          path: '/schedule',
+          path: '/booked',
           pageBuilder: (context, state) => CustomTransitionPage(
-            child: const ScheduleScreen(),
+            child: const BookedScreen(),
             transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
             transitionDuration: AppConstants.screenTransition,
           ),
         ),
@@ -68,9 +78,8 @@ final GoRouter appRouter = GoRouter(
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const ProfileScreen(),
             transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
             transitionDuration: AppConstants.screenTransition,
           ),
         ),
@@ -81,6 +90,13 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final roomId = int.parse(state.pathParameters['id']!);
         return RoomDetailScreen(roomId: roomId);
+      },
+    ),
+    GoRoute(
+      path: '/booked-detail/:id',
+      builder: (context, state) {
+        final bookingId = int.parse(state.pathParameters['id']!);
+        return BookedDetailScreen(bookingId: bookingId);
       },
     ),
   ],
@@ -97,7 +113,13 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
-  static const _routes = ['/home', '/favorites', '/schedule', '/profile'];
+  static const _routes = [
+    '/home',
+    '/explore',
+    '/favorites',
+    '/booked',
+    '/profile'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -115,11 +137,6 @@ class _MainShellState extends State<MainShell> {
       bottomNavigationBar: GlassBottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) {
-          if (index == 4) {
-            // Center FAB — placeholder, navigate home
-            context.go('/home');
-            return;
-          }
           if (index != _currentIndex) {
             setState(() => _currentIndex = index);
             context.go(_routes[index]);

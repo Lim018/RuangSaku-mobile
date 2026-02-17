@@ -3,7 +3,8 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 
 class SuccessToast {
-  static void show(BuildContext context, {String message = 'Ruang telah dipesan'}) {
+  static void show(BuildContext context,
+      {String message = 'Ruang telah dipesan'}) {
     final overlay = Overlay.of(context);
     late OverlayEntry entry;
 
@@ -81,10 +82,10 @@ class _ToastWidgetState extends State<_ToastWidget>
               decoration: BoxDecoration(
                 color: AppColors.slate900,
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.white.withOpacity(0.1)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.slate900.withOpacity(0.3),
+                    color: AppColors.slate900.withValues(alpha: 0.3),
                     blurRadius: 24,
                     offset: const Offset(0, 8),
                   ),
@@ -99,7 +100,8 @@ class _ToastWidgetState extends State<_ToastWidget>
                       color: AppColors.emerald500,
                       borderRadius: BorderRadius.circular(18),
                     ),
-                    child: const Icon(Icons.check_rounded, color: Colors.white, size: 22),
+                    child: const Icon(Icons.check_rounded,
+                        color: Colors.white, size: 22),
                   ),
                   const SizedBox(width: 14),
                   Column(
@@ -116,7 +118,8 @@ class _ToastWidgetState extends State<_ToastWidget>
                       const SizedBox(height: 2),
                       Text(
                         widget.message,
-                        style: AppTypography.bodyXS.copyWith(color: AppColors.slate400),
+                        style: AppTypography.bodyXS
+                            .copyWith(color: AppColors.slate400),
                       ),
                     ],
                   ),

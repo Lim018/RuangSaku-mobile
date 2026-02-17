@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_typography.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,148 +13,181 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool _obscurePassword = true;
+  bool _obscure = true;
+  bool _loading = false;
+
+  void _handleLogin() {
+    setState(() => _loading = true);
+    Future.delayed(const Duration(milliseconds: 1200), () {
+      if (mounted) context.go('/home');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Ekses Pantas.',
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w900,
-                  color: AppColors.slate900,
-                  height: 1.1,
-                  letterSpacing: -1,
+              const SizedBox(height: 48),
+
+              // Icon
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: AppColors.blue600,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                        color: AppColors.blue200,
+                        blurRadius: 20,
+                        offset: const Offset(0, 8)),
+                  ],
                 ),
+                child: const Icon(LucideIcons.logIn,
+                    size: 32, color: Colors.white),
               )
                   .animate()
                   .fadeIn(duration: 500.ms)
-                  .slideY(begin: 0.2, curve: Curves.easeOutCubic),
+                  .scale(begin: const Offset(0.5, 0.5)),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
 
-              const Text(
-                'Tempah bilik kuliah semudah satu ketikan.',
+              Text(
+                'Selamat Datang',
+                style: AppTypography.headingBlack.copyWith(fontSize: 28),
+              ).animate().fadeIn(delay: 200.ms, duration: 500.ms),
+
+              const SizedBox(height: 8),
+
+              Text(
+                'Masuk dengan akun portal akademik Anda',
                 style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.slate400,
-                ),
-              )
-                  .animate()
-                  .fadeIn(duration: 500.ms, delay: 100.ms)
-                  .slideY(begin: 0.2, curve: Curves.easeOutCubic),
+                    color: AppColors.slate400,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14),
+              ).animate().fadeIn(delay: 300.ms, duration: 500.ms),
 
-              const SizedBox(height: 56),
+              const SizedBox(height: 40),
 
-              // NIM Input
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.slate50,
-                  borderRadius: BorderRadius.circular(28),
-                  border: Border.all(color: AppColors.slate100),
-                ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'NIM / ID Pelajar',
-                    hintStyle: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.slate400,
-                    ),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.all(20),
-                  ),
-                ),
-              )
-                  .animate()
-                  .fadeIn(duration: 500.ms, delay: 200.ms)
-                  .slideY(begin: 0.2, curve: Curves.easeOutCubic),
+              // NIM / Email
+              _buildLabel('NIM / EMAIL'),
+              const SizedBox(height: 4),
+              TextField(
+                decoration: _inputDecoration('434231022'),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+              ),
 
               const SizedBox(height: 16),
 
-              // Password Input
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.slate50,
-                  borderRadius: BorderRadius.circular(28),
-                  border: Border.all(color: AppColors.slate100),
+              // Password
+              _buildLabel('KATA SANDI'),
+              const SizedBox(height: 4),
+              TextField(
+                obscureText: _obscure,
+                decoration: _inputDecoration('••••••••').copyWith(
+                  suffixIcon: GestureDetector(
+                    onTap: () => setState(() => _obscure = !_obscure),
+                    child: Icon(
+                      _obscure ? LucideIcons.eye : LucideIcons.eyeOff,
+                      color: AppColors.slate300,
+                      size: 20,
+                    ),
+                  ),
                 ),
-                child: TextField(
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    hintText: 'Kata Laluan',
-                    hintStyle: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.slate400,
-                    ),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.all(20),
-                    suffixIcon: GestureDetector(
-                      onTap: () =>
-                          setState(() => _obscurePassword = !_obscurePassword),
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 16),
-                        child: Icon(
-                          _obscurePassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                          color: AppColors.slate400,
-                        ),
-                      ),
-                    ),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Login button
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: _loading ? null : _handleLogin,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.blue600,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                    elevation: 8,
+                    shadowColor: AppColors.blue200,
+                  ),
+                  child: Text(
+                    _loading ? 'Memproses...' : 'Log Masuk',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w900, fontSize: 18),
                   ),
                 ),
               )
                   .animate()
-                  .fadeIn(duration: 500.ms, delay: 300.ms)
-                  .slideY(begin: 0.2, curve: Curves.easeOutCubic),
+                  .fadeIn(delay: 500.ms, duration: 500.ms)
+                  .slideY(begin: 0.2),
 
+              const Spacer(),
+
+              Text(
+                'Universitas RuangSaku © 2026',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.slate300,
+                  letterSpacing: 2,
+                ),
+              ),
               const SizedBox(height: 32),
-
-              // Login Button
-              GestureDetector(
-                onTap: () => context.go('/home'),
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  decoration: BoxDecoration(
-                    color: AppColors.slate900,
-                    borderRadius: BorderRadius.circular(28),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.slate200,
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Masuk',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              )
-                  .animate()
-                  .fadeIn(duration: 500.ms, delay: 400.ms)
-                  .slideY(begin: 0.2, curve: Curves.easeOutCubic),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildLabel(String text) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            color: AppColors.slate400,
+            letterSpacing: 1,
+          ),
+        ),
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String hint) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle:
+          TextStyle(color: AppColors.slate300, fontWeight: FontWeight.w600),
+      filled: true,
+      fillColor: AppColors.slate50,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: AppColors.slate100),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: AppColors.slate100),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(
+            color: AppColors.blue600.withValues(alpha: 0.3), width: 2),
       ),
     );
   }

@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 
 class Building {
+  final int id;
   final String name;
-  final IconData icon;
+  final String icon; // String icon name, mapped in UI
   final int roomCount;
-  final Color bgColor;
-  final Color iconColor;
-  final Color borderColor;
+  final Color color;
 
   const Building({
+    this.id = 0,
     required this.name,
     required this.icon,
     required this.roomCount,
-    required this.bgColor,
-    required this.iconColor,
-    required this.borderColor,
+    this.color = const Color(0xFFDBEAFE),
   });
 }
